@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>login</title>
+<title>Cybersecurity Training Demo</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -10,7 +10,16 @@
     background: #000;
     color: #f5f5f5;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  }
+}
+
+.demo-banner {
+    background: #ffcc00;
+    color: #000;
+    text-align: center;
+    padding: 14px;
+    font-weight: bold;
+    font-size: 15px;
+}
   .wrapper {
     display: flex;
     min-height: 100vh;
@@ -172,16 +181,18 @@
 </style>
 </head>
 <body>
-<div class="wrapper">
+<div class="demo-banner">
+    ⚠️ Educational Demonstration Only – This website is a simulated login page created for cybersecurity training. It is not affiliated with Instagram or Meta.
+</div>
   <div class="left">
-    <div class="ig-logo">
+    <div class="demo-logo">
       <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
         <rect x="2" y="2" width="20" height="20" rx="5"/>
         <circle cx="12" cy="12" r="4.5"/>
         <circle cx="17.5" cy="6.5" r="1.2" fill="white" stroke="none"/>
       </svg>
     </div>
-    <div class="tagline">See everyday moments from your <span class="accent">close friends</span>.</div>
+    <div class="tagline">This is a simulated login page for cybersecurity training. <span class="accent">close friends</span>.</div>
     <div class="phones">
       <div class="phone phone1"></div>
       <div class="phone phone2"></div>
@@ -191,17 +202,17 @@
 
   <div class="right">
     <div class="login-box">
-      <div class="login-title">Log in to instagram</div>
-      <input id="user" type="text" placeholder="Mobile number, username or email address">
-      <input id="pass" type="password" placeholder="Password">
+      <div class="login-title">Demo Login</div>
+      <input id="user" type="text" placeholder="Demo Mobile number, username or email address">
+      <input id="pass" type="password" placeholder="Demo Password">
       <button class="login-btn" id="loginBtn">Log in</button>
       <a class="forgot" href="#">Forgotten password?</a>
       <button class="fb-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877f2"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>
-        Log in with Facebook
+    
       </button>
       <button class="create-btn">Create new account</button>
-      <div class="meta-logo">∞ Meta</div>
+      <div class="meta-logo">Daystar University</div>
     </div>
   </div>
 </div>
