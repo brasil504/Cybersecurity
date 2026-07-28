@@ -451,6 +451,44 @@
   .new-log a { color: var(--brass-bright); text-decoration: none; }
   .new-log a:hover { text-decoration: underline; }
 
+  .or-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 0 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--parchment-dim);
+    text-transform: uppercase;
+  }
+  .or-divider::before, .or-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .github-btn {
+    width: 100%;
+    padding: 9px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: rgba(6,18,31,0.5);
+    color: var(--parchment);
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .github-btn:hover { border-color: var(--brass-bright); background: rgba(201,162,74,0.08); }
+  .github-btn:focus-visible { outline: 2px solid var(--brass-bright); outline-offset: 2px; }
+
   .demo-note {
     position: absolute;
     bottom: 18px;
@@ -519,8 +557,8 @@
 
       <div class="inner">
         <div class="lamp-icon"></div>
-        <h1>Welcome back, keeper</h1>
-        <div class="greeting">last entry logged 2 nights ago</div>
+        <h1 id="headline">Welcome back, keeper</h1>
+        <div class="greeting" id="subGreeting">last entry logged 2 nights ago</div>
 
         <form id="loginForm" novalidate>
           <div class="field">
@@ -553,12 +591,18 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20 6L9 17l-5-5"/>
             </svg>
-            Logbook opened
+            <span id="successText">Logbook opened</span>
           </div>
           <div class="error-msg" id="errorMsg"></div>
         </form>
 
-        <div class="new-log">New keeper? <a href="#">Register a station</a></div>
+        <div class="or-divider"><span>or</span></div>
+        <button class="github-btn" id="githubBtn" type="button">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.4 7.9 10.94.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.22.7-3.9-1.55-3.9-1.55-.53-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.57-.29-5.28-1.29-5.28-5.72 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.64 1.59.24 2.76.12 3.05.74.81 1.18 1.84 1.18 3.1 0 4.44-2.71 5.42-5.29 5.71.42.36.78 1.07.78 2.15 0 1.56-.02 2.81-.02 3.19 0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12c0-6.35-5.15-11.5-11.5-11.5z"/></svg>
+          Continue with GitHub
+        </button>
+
+        <div class="new-log" id="modeToggleWrap">New keeper? <a href="#" id="modeToggle">Register a station</a></div>
       </div>
     </div>
   </div>
@@ -605,8 +649,8 @@
   // ---- Supabase config ----
   // Paste your project's values from Project Settings > API.
   // The anon/public key is safe to expose in client-side code.
-  const SUPABASE_URL = 'https://hcscjoqebozfoeevfktl.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_AIew0nkWkEFAXTmLES-uqw_WqO_3vww';
+  const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 
   const supabaseClient = (SUPABASE_URL.startsWith('http'))
     ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -618,6 +662,59 @@
   const successMsg = document.getElementById('successMsg');
   const errorMsg = document.getElementById('errorMsg');
   const emailInput = document.getElementById('username');
+  const headline = document.getElementById('headline');
+  const subGreeting = document.getElementById('subGreeting');
+  const modeToggleWrap = document.getElementById('modeToggleWrap');
+  const modeToggle = document.getElementById('modeToggle');
+
+  let mode = 'signin'; // 'signin' | 'signup'
+
+  function renderMode() {
+    successMsg.classList.remove('show');
+    errorMsg.classList.remove('show');
+    if (mode === 'signin') {
+      headline.textContent = 'Welcome back, keeper';
+      subGreeting.textContent = 'last entry logged 2 nights ago';
+      btnLabel.textContent = 'Enter the logbook';
+      modeToggleWrap.innerHTML = 'New keeper? <a href="#" id="modeToggle">Register a station</a>';
+    } else {
+      headline.textContent = 'Register a new station';
+      subGreeting.textContent = 'takes less than a minute';
+      btnLabel.textContent = 'Create my logbook';
+      modeToggleWrap.innerHTML = 'Already a keeper? <a href="#" id="modeToggle">Sign in instead</a>';
+    }
+    // the link was replaced via innerHTML, so re-bind its click handler
+    document.getElementById('modeToggle').addEventListener('click', (e) => {
+      e.preventDefault();
+      mode = mode === 'signin' ? 'signup' : 'signin';
+      renderMode();
+    });
+  }
+  modeToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    mode = mode === 'signin' ? 'signup' : 'signin';
+    renderMode();
+  });
+
+  const githubBtn = document.getElementById('githubBtn');
+  githubBtn.addEventListener('click', async () => {
+    if (!supabaseClient) {
+      errorMsg.textContent = 'Add your Supabase URL and anon key in the script to connect this button.';
+      errorMsg.classList.add('show');
+      return;
+    }
+    errorMsg.classList.remove('show');
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: 'github',
+      options: { redirectTo: window.location.href }
+    });
+    if (error) {
+      errorMsg.textContent = error.message;
+      errorMsg.classList.add('show');
+    }
+    // On success, Supabase redirects to GitHub, then back to redirectTo
+    // with the session already established.
+  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -634,21 +731,30 @@
 
     enterBtn.classList.add('loading');
     enterBtn.disabled = true;
-    btnLabel.textContent = 'Checking the tide charts…';
+    btnLabel.textContent = mode === 'signin' ? 'Checking the tide charts…' : 'Setting up your station…';
 
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-      email: emailInput.value.trim(),
-      password: passwordInput.value
-    });
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    const { data, error } = mode === 'signin'
+      ? await supabaseClient.auth.signInWithPassword({ email, password })
+      : await supabaseClient.auth.signUp({ email, password });
 
     enterBtn.classList.remove('loading');
     enterBtn.disabled = false;
-    btnLabel.textContent = 'Enter the logbook';
+    btnLabel.textContent = mode === 'signin' ? 'Enter the logbook' : 'Create my logbook';
 
     if (error) {
       errorMsg.textContent = error.message;
       errorMsg.classList.add('show');
       return;
+    }
+
+    if (mode === 'signup' && data.user && !data.session) {
+      // email confirmation is required before this account can sign in
+      document.getElementById('successText').textContent = 'Check your email to confirm your station';
+    } else {
+      document.getElementById('successText').textContent = 'Logbook opened';
     }
 
     successMsg.classList.add('show');
