@@ -21,6 +21,16 @@
     --line: rgba(201,162,74,0.22);
     --sea-deep: #0a1f30;
     --sea-mid: #10334e;
+    --paper-a: #f6efdd;
+    --paper-b: #ecdfc0;
+    --ink: #2b2013;
+    --ink-soft: #6b5842;
+    --ink-faint: rgba(43,32,19,0.32);
+    --rule: rgba(91,75,54,0.16);
+    --margin-red: #a23b32;
+    --brass-deep: #8a6a1e;
+    --ok: #2f6b45;
+    --err: #a23b32;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; }
@@ -197,80 +207,83 @@
     margin-top: 3px;
   }
 
-  .porthole-wrap { perspective: 900px; }
+  .page-wrap { perspective: 1100px; }
 
-  .porthole {
+  .page-card {
     position: relative;
-    width: 400px;
-    max-width: 100%;
-    border-radius: 50%;
-    aspect-ratio: 1 / 1;
-    background: var(--panel);
-    border: 10px solid #0c2033;
-    box-shadow:
-      0 0 0 3px var(--brass),
-      0 0 0 4px #06121f,
-      inset 0 0 60px rgba(0,0,0,0.55),
-      0 40px 90px rgba(0,0,0,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    width: 380px;
+    max-width: 92vw;
+    padding: 46px 34px 40px 60px;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0 27px, var(--rule) 27px 28px),
+      radial-gradient(circle at 88% 12%, rgba(120,90,50,0.06), transparent 40%),
+      radial-gradient(circle at 8% 85%, rgba(120,90,50,0.07), transparent 35%),
+      linear-gradient(180deg, var(--paper-a), var(--paper-b));
+    color: var(--ink);
+    box-shadow: 0 30px 70px rgba(0,0,0,0.55), 0 2px 0 rgba(255,255,255,0.4) inset;
+    clip-path: polygon(
+      0% 1.6%, 5% 0.2%, 10% 1.4%, 15% 0.3%, 20% 1.6%, 25% 0.2%, 30% 1.3%, 35% 0.3%, 40% 1.5%, 45% 0.2%,
+      50% 1.2%, 55% 0.3%, 60% 1.5%, 65% 0.2%, 70% 1.3%, 75% 0.3%, 80% 1.6%, 85% 0.2%, 90% 1.4%, 95% 0.3%, 100% 1.5%,
+      100% 98.3%, 95% 99.8%, 90% 98.5%, 85% 99.7%, 80% 98.3%, 75% 99.8%, 70% 98.4%, 65% 99.7%, 60% 98.5%, 55% 99.8%,
+      50% 98.6%, 45% 99.7%, 40% 98.4%, 35% 99.8%, 30% 98.5%, 25% 99.7%, 20% 98.4%, 15% 99.8%, 10% 98.4%, 5% 99.7%, 0% 98.3%
+    );
     transition: transform 0.25s ease;
     transform-style: preserve-3d;
   }
 
-  .glass-glare {
+  .page-card::after {
+    content: '';
     position: absolute;
-    top: -18%; left: -12%;
-    width: 60%; height: 60%;
-    border-radius: 50%;
-    background: radial-gradient(ellipse at 40% 40%, rgba(241,233,214,0.10), transparent 70%);
-    transform: rotate(-18deg);
-    pointer-events: none;
+    right: 0; bottom: 0;
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, #f1e6c8, #cbb98a);
+    clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+    box-shadow: -3px -3px 8px rgba(0,0,0,0.25);
   }
 
-  .rivet {
+  .spine {
     position: absolute;
-    width: 9px; height: 9px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, var(--brass-bright), #7a5f22 75%);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    left: 0; top: 0; bottom: 0;
+    width: 22px;
+    background: linear-gradient(to right, rgba(43,32,19,0.22), rgba(43,32,19,0.02));
+  }
+  .spine::before {
+    content: '';
+    position: absolute;
+    inset: 6% 0;
+    left: 9px;
+    width: 2px;
+    background-image: repeating-linear-gradient(to bottom, var(--ink-faint) 0 5px, transparent 5px 13px);
   }
 
-  .drift {
+  .margin-rule {
     position: absolute;
-    border-radius: 50%;
-    background: var(--brass-bright);
-    opacity: 0.35;
-    pointer-events: none;
-    animation: drift-up linear infinite;
+    left: 44px;
+    top: 5%;
+    bottom: 5%;
+    width: 1px;
+    background: var(--margin-red);
+    opacity: 0.45;
   }
-  @keyframes drift-up {
-    from { transform: translateY(10%) translateX(0); opacity: 0; }
-    10%  { opacity: 0.4; }
-    90%  { opacity: 0.2; }
-    to   { transform: translateY(-115%) translateX(6px); opacity: 0; }
-  }
-  @media (prefers-reduced-motion: reduce) { .drift { animation: none; opacity: 0.15; } }
 
   .inner {
-    width: 78%;
+    width: 100%;
     text-align: center;
     position: relative;
     z-index: 2;
   }
 
   .lamp-icon {
-    width: 30px; height: 30px;
+    width: 28px; height: 28px;
     margin: 0 auto 14px;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--lamp) 0%, rgba(217,96,58,0.15) 70%, transparent 72%);
+    background: radial-gradient(circle at 35% 30%, var(--lamp-glow), var(--lamp) 65%, #8a3a1e 100%);
+    box-shadow: 0 2px 4px rgba(43,32,19,0.3), inset 0 -2px 3px rgba(0,0,0,0.25);
     animation: lamp-pulse 3.4s ease-in-out infinite;
   }
   @keyframes lamp-pulse {
-    0%, 100% { opacity: 0.85; transform: scale(1); }
-    50%      { opacity: 1; transform: scale(1.08); }
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.06); }
   }
   @media (prefers-reduced-motion: reduce) { .lamp-icon { animation: none; } }
 
@@ -279,11 +292,12 @@
     font-weight: 500;
     font-size: 21px;
     margin: 0 0 4px;
+    color: var(--ink);
   }
   .greeting {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
-    color: var(--parchment-dim);
+    color: var(--ink-soft);
     margin-bottom: 20px;
     letter-spacing: 0.04em;
   }
@@ -297,43 +311,43 @@
     font-size: 9.5px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--brass);
+    color: var(--ink-soft);
     margin-bottom: 4px;
   }
   .field input {
     width: 100%;
-    padding: 9px 11px;
-    background: rgba(6,18,31,0.6);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    color: var(--parchment);
-    font-size: 13px;
+    padding: 7px 4px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--ink-faint);
+    border-radius: 0;
+    color: var(--ink);
+    font-size: 13.5px;
     font-family: 'Inter', sans-serif;
   }
-  .field.has-toggle input { padding-right: 34px; }
-  .field input::placeholder { color: rgba(241,233,214,0.28); }
+  .field.has-toggle input { padding-right: 30px; }
+  .field input::placeholder { color: rgba(43,32,19,0.28); }
   .field input:focus {
-    outline: 2px solid var(--brass-bright);
-    outline-offset: 1px;
-    border-color: transparent;
+    outline: none;
+    border-bottom-color: var(--margin-red);
   }
 
   .eye-btn {
     position: absolute;
-    right: 6px;
-    top: 24px;
+    right: 4px;
+    top: 22px;
     width: 24px; height: 24px;
     border: none;
     background: none;
-    color: var(--parchment-dim);
+    color: var(--ink-faint);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 4px;
   }
-  .eye-btn:hover { color: var(--brass-bright); }
-  .eye-btn:focus-visible { outline: 1px solid var(--brass-bright); }
+  .eye-btn:hover { color: var(--ink); }
+  .eye-btn:focus-visible { outline: 1px solid var(--margin-red); }
   .eye-btn svg { width: 15px; height: 15px; }
 
   .keep-row {
@@ -347,7 +361,7 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    color: var(--parchment-dim);
+    color: var(--ink-soft);
     cursor: pointer;
     user-select: none;
   }
@@ -355,8 +369,8 @@
   .toggle-track {
     width: 30px; height: 16px;
     border-radius: 999px;
-    background: rgba(241,233,214,0.15);
-    border: 1px solid var(--line);
+    background: rgba(43,32,19,0.12);
+    border: 1px solid var(--ink-faint);
     position: relative;
     transition: background 0.2s ease;
     flex-shrink: 0;
@@ -367,17 +381,17 @@
     top: 1.5px; left: 2px;
     width: 11px; height: 11px;
     border-radius: 50%;
-    background: var(--parchment-dim);
+    background: var(--ink-soft);
     transition: transform 0.2s ease, background 0.2s ease;
   }
-  .toggle input:checked + .toggle-track { background: rgba(201,162,74,0.35); }
+  .toggle input:checked + .toggle-track { background: rgba(162,59,50,0.2); }
   .toggle input:checked + .toggle-track::after {
     transform: translateX(13px);
-    background: var(--brass-bright);
+    background: var(--margin-red);
   }
-  .toggle input:focus-visible + .toggle-track { outline: 2px solid var(--brass-bright); outline-offset: 2px; }
+  .toggle input:focus-visible + .toggle-track { outline: 2px solid var(--margin-red); outline-offset: 2px; }
 
-  .keep-row a { color: var(--brass-bright); text-decoration: none; }
+  .keep-row a { color: var(--brass-deep); text-decoration: none; }
   .keep-row a:hover { text-decoration: underline; }
 
   .enter-btn {
@@ -402,7 +416,7 @@
   }
   .enter-btn:hover { filter: brightness(1.06); }
   .enter-btn:active { transform: translateY(1px); filter: brightness(0.96); }
-  .enter-btn:focus-visible { outline: 2px solid var(--parchment); outline-offset: 2px; }
+  .enter-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
   .enter-btn[disabled] { cursor: default; }
 
   .btn-label { transition: opacity 0.15s ease; }
@@ -425,7 +439,7 @@
     gap: 8px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11.5px;
-    color: #bfe3b8;
+    color: var(--ok);
     margin-top: 10px;
     opacity: 0;
     transition: opacity 0.35s ease;
@@ -437,7 +451,7 @@
     display: none;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
-    color: #e39a8a;
+    color: var(--err);
     margin-top: 10px;
     text-align: center;
   }
@@ -446,9 +460,9 @@
   .new-log {
     margin-top: 10px;
     font-size: 10.5px;
-    color: var(--parchment-dim);
+    color: var(--ink-soft);
   }
-  .new-log a { color: var(--brass-bright); text-decoration: none; }
+  .new-log a { color: var(--brass-deep); text-decoration: none; }
   .new-log a:hover { text-decoration: underline; }
 
   .or-divider {
@@ -459,23 +473,23 @@
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.08em;
-    color: var(--parchment-dim);
+    color: var(--ink-soft);
     text-transform: uppercase;
   }
   .or-divider::before, .or-divider::after {
     content: '';
     flex: 1;
     height: 1px;
-    background: var(--line);
+    background: var(--rule);
   }
 
   .github-btn {
     width: 100%;
     padding: 9px 10px;
     border-radius: 6px;
-    border: 1px solid var(--line);
-    background: rgba(6,18,31,0.5);
-    color: var(--parchment);
+    border: 1px solid var(--ink-faint);
+    background: rgba(43,32,19,0.04);
+    color: var(--ink);
     font-family: 'Inter', sans-serif;
     font-size: 12.5px;
     font-weight: 500;
@@ -486,8 +500,8 @@
     cursor: pointer;
     transition: border-color 0.2s ease, background 0.2s ease;
   }
-  .github-btn:hover { border-color: var(--brass-bright); background: rgba(201,162,74,0.08); }
-  .github-btn:focus-visible { outline: 2px solid var(--brass-bright); outline-offset: 2px; }
+  .github-btn:hover { border-color: var(--ink); background: rgba(43,32,19,0.09); }
+  .github-btn:focus-visible { outline: 2px solid var(--margin-red); outline-offset: 2px; }
 
   .demo-note {
     position: absolute;
@@ -502,8 +516,77 @@
     text-align: center;
   }
 
+  .feed-panel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 5;
+    width: 240px;
+    max-height: 220px;
+    background: rgba(15,35,56,0.9);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    backdrop-filter: blur(6px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .feed-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--brass-bright);
+    border-bottom: 1px solid var(--line);
+  }
+  .feed-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #6a7580;
+  }
+  .feed-dot.live {
+    background: #7fd897;
+    box-shadow: 0 0 6px rgba(127,216,151,0.7);
+    animation: dot-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes dot-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .feed-list {
+    padding: 8px 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 6px;
+  }
+  .feed-empty {
+    font-size: 11px;
+    color: var(--parchment-dim);
+    padding: 8px 2px;
+  }
+  .feed-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--parchment);
+    border-left: 2px solid var(--brass);
+    padding: 4px 8px;
+    background: rgba(6,18,31,0.5);
+    border-radius: 0 4px 4px 0;
+    animation: feed-in 0.3s ease;
+  }
+  @keyframes feed-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .feed-item .tag { color: var(--brass-bright); }
+
+  @media (max-width: 640px) {
+    .feed-panel { left: 16px; right: 16px; width: auto; bottom: 16px; }
+  }
+
   @media (max-width: 460px) {
-    .porthole { width: 320px; }
+    .page-card { width: 320px; padding-left: 46px; }
+    .margin-rule { left: 32px; }
     .wordmark { top: 18px; }
     .lighthouse { left: 8%; }
   }
@@ -538,22 +621,10 @@
 </div>
 
 <div class="stage">
-  <div class="porthole-wrap">
-    <div class="porthole" id="porthole">
-      <div class="rivet" style="top: 6%; left: 50%; transform: translateX(-50%);"></div>
-      <div class="rivet" style="bottom: 6%; left: 50%; transform: translateX(-50%);"></div>
-      <div class="rivet" style="top: 50%; left: 4%; transform: translateY(-50%);"></div>
-      <div class="rivet" style="top: 50%; right: 4%; transform: translateY(-50%);"></div>
-      <div class="rivet" style="top: 15%; left: 15%;"></div>
-      <div class="rivet" style="top: 15%; right: 15%;"></div>
-      <div class="rivet" style="bottom: 15%; left: 15%;"></div>
-      <div class="rivet" style="bottom: 15%; right: 15%;"></div>
-
-      <div class="glass-glare"></div>
-      <div class="drift" style="width:2px; height:2px; left:30%; bottom:0; animation-duration:7s; animation-delay:0s;"></div>
-      <div class="drift" style="width:1.5px; height:1.5px; left:55%; bottom:0; animation-duration:9s; animation-delay:2s;"></div>
-      <div class="drift" style="width:2px; height:2px; left:68%; bottom:0; animation-duration:6.5s; animation-delay:4s;"></div>
-      <div class="drift" style="width:1px; height:1px; left:42%; bottom:0; animation-duration:8s; animation-delay:1s;"></div>
+  <div class="page-wrap">
+    <div class="page-card" id="porthole">
+      <div class="spine"></div>
+      <div class="margin-rule"></div>
 
       <div class="inner">
         <div class="lamp-icon"></div>
@@ -608,6 +679,16 @@
   </div>
 </div>
 
+<div class="feed-panel" id="feedPanel">
+  <div class="feed-head">
+    <span>Live watch feed</span>
+    <span class="feed-dot" id="feedDot"></span>
+  </div>
+  <div class="feed-list" id="feedList">
+    <div class="feed-empty">Sign in to see entries appear here in real time.</div>
+  </div>
+</div>
+
 <div class="demo-note">fictional interface — no data leaves this page</div>
 
 <script>
@@ -651,6 +732,7 @@
   // The anon/public key is safe to expose in client-side code.
   const SUPABASE_URL = 'https://hcscjoqebozfoeevfktl.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_AIew0nkWkEFAXTmLES-uqw_WqO_3vww';
+
   const supabaseClient = (SUPABASE_URL.startsWith('http'))
     ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
     : null;
@@ -715,6 +797,39 @@
     // with the session already established.
   });
 
+  const feedList = document.getElementById('feedList');
+  const feedDot = document.getElementById('feedDot');
+  let realtimeChannel = null;
+
+  function addFeedItem(entry) {
+    const empty = feedList.querySelector('.feed-empty');
+    if (empty) empty.remove();
+
+    const time = new Date(entry.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const item = document.createElement('div');
+    item.className = 'feed-item';
+    item.innerHTML = `<span class="tag">[${time}]</span> watch logged — ${entry.watch_period || 'unspecified'}`;
+    feedList.prepend(item);
+  }
+
+  function subscribeToOwnEntries(userId) {
+    if (realtimeChannel) {
+      supabaseClient.removeChannel(realtimeChannel);
+    }
+    realtimeChannel = supabaseClient
+      .channel('logbook-entries-' + userId)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'logbook_entries', filter: `user_id=eq.${userId}` },
+        (payload) => addFeedItem(payload.new)
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          feedDot.classList.add('live');
+        }
+      });
+  }
+
   function currentWatchPeriod() {
     const hour = new Date().getHours();
     if (hour >= 17 || hour < 1) return 'dusk';
@@ -746,6 +861,8 @@
       ? await supabaseClient.auth.signInWithPassword({ email, password })
       : await supabaseClient.auth.signUp({ email, password });
 
+    console.log('Supabase response —', { mode, data, error });
+
     enterBtn.classList.remove('loading');
     enterBtn.disabled = false;
     btnLabel.textContent = mode === 'signin' ? 'Enter the logbook' : 'Create my logbook';
@@ -764,9 +881,14 @@
 
       // On a real sign-in with an active session, log a watch entry
       if (mode === 'signin' && data.user) {
-        const { error: insertError } = await supabaseClient
+        subscribeToOwnEntries(data.user.id);
+
+        const { data: insertData, error: insertError } = await supabaseClient
           .from('logbook_entries')
-          .insert({ user_id: data.user.id, watch_period: currentWatchPeriod() });
+          .insert({ user_id: data.user.id, watch_period: currentWatchPeriod() })
+          .select();
+
+        console.log('Insert attempt —', { insertData, insertError });
 
         if (insertError) {
           console.error('Could not log entry:', insertError.message);
