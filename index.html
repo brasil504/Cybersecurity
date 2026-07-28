@@ -2,228 +2,660 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Cybersecurity Training Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tidegate — Sign in to your logbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
+  :root {
+    --navy-deep: #071320;
+    --navy: #0f2338;
+    --panel: #14304a;
+    --parchment: #f1e9d6;
+    --parchment-dim: #b9ae95;
+    --brass: #c9a24a;
+    --brass-bright: #e3c274;
+    --lamp: #d9603a;
+    --lamp-glow: #ffb066;
+    --line: rgba(201,162,74,0.22);
+    --sea-deep: #0a1f30;
+    --sea-mid: #10334e;
+  }
   * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
   body {
-    margin: 0;
-    background: #000;
-    color: #f5f5f5;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
-
-.demo-banner {
-    background: #ffcc00;
-    color: #000;
-    text-align: center;
-    padding: 14px;
-    font-weight: bold;
-    font-size: 15px;
-}
-  .wrapper {
-    display: flex;
+    background: var(--navy-deep);
+    color: var(--parchment);
+    font-family: 'Inter', sans-serif;
     min-height: 100vh;
-  }
-  .left {
-    flex: 1;
-    background: #121212;
-    border-right: 1px solid #262626;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-  }
-  .demo-logo {
-    width: 70px;
-    height: 70px;
-    border-radius: 22px;
-    background: radial-gradient(circle at 30% 110%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 30px;
-  }
-  .demo-logo svg { width: 38px; height: 38px; }
-  .tagline {
-    font-size: 32px;
-    text-align: center;
-    line-height: 1.3;
-    font-weight: 600;
-    max-width: 480px;
-    margin-bottom: 36px;
-  }
-  .tagline .accent { color: #ff3aa0; }
-  .phones {
-    position: relative;
-    width: 260px;
-    height: 220px;
-  }
-  .phone {
-    position: absolute;
-    width: 150px;
-    height: 200px;
-    border-radius: 18px;
     overflow: hidden;
-    border: 4px solid #2a2a2a;
-    background-size: cover;
-    background-position: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    position: relative;
   }
-  .phone1 {
-    left: 0;
-    top: 20px;
-    background-image: url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=60');
-    transform: rotate(-6deg);
+
+  /* ---------- layered scene ---------- */
+  .scene {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
   }
-  .phone2 {
-    left: 55px;
-    top: 0;
-    background-image: url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&q=60');
+
+  .sky {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 72% 8%, #1c3a55 0%, transparent 55%),
+                linear-gradient(180deg, #0a1a2c 0%, #0d2438 46%, var(--sea-deep) 46%, var(--sea-deep) 100%);
+  }
+
+  .moon {
+    position: absolute;
+    top: 9%;
+    right: 14%;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 34%, #fdf6e3, #e9dcb0 55%, #c9b784 100%);
+    box-shadow: 0 0 60px rgba(233,220,176,0.28), 0 0 120px rgba(233,220,176,0.10);
+  }
+  .moon::before, .moon::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(180,163,120,0.35);
+  }
+  .moon::before { width: 12px; height: 12px; top: 14px; left: 12px; }
+  .moon::after  { width: 8px;  height: 8px;  top: 34px; left: 30px; }
+
+  .stars {
+    position: absolute;
+    inset: 0;
+    height: 46%;
+    background-image:
+      radial-gradient(1.3px 1.3px at 8% 22%, rgba(241,233,214,0.65), transparent),
+      radial-gradient(1px 1px at 18% 12%, rgba(241,233,214,0.4), transparent),
+      radial-gradient(1.5px 1.5px at 30% 32%, rgba(241,233,214,0.5), transparent),
+      radial-gradient(1px 1px at 42% 8%, rgba(241,233,214,0.35), transparent),
+      radial-gradient(1px 1px at 52% 26%, rgba(241,233,214,0.45), transparent),
+      radial-gradient(1.3px 1.3px at 62% 14%, rgba(241,233,214,0.4), transparent),
+      radial-gradient(1px 1px at 88% 30%, rgba(241,233,214,0.4), transparent),
+      radial-gradient(1px 1px at 6% 38%, rgba(241,233,214,0.3), transparent),
+      radial-gradient(1px 1px at 25% 4%, rgba(241,233,214,0.3), transparent);
+    animation: twinkle 5s ease-in-out infinite;
+  }
+  @keyframes twinkle { 0%,100% { opacity: 0.85; } 50% { opacity: 1; } }
+
+  .headland {
+    position: absolute;
+    left: -6%;
+    bottom: 42%;
+    width: 46%;
+    height: 30%;
+    background: #061019;
+    clip-path: polygon(0% 100%, 0% 55%, 14% 40%, 26% 46%, 38% 18%, 52% 30%, 70% 10%, 100% 34%, 100% 100%);
+  }
+
+  .lighthouse {
+    position: absolute;
+    left: 15.5%;
+    bottom: 55%;
+    width: 26px;
+    height: 88px;
     z-index: 2;
   }
-  .phone3 {
-    left: 110px;
-    top: 25px;
-    background-image: url('https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300&q=60');
-    transform: rotate(6deg);
+  .lh-body {
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 16px; height: 66px;
+    background: linear-gradient(180deg, var(--parchment) 0 14px, #cf5b3a 14px 26px, var(--parchment) 26px 40px, #cf5b3a 40px 52px, var(--parchment) 52px 66px);
+    clip-path: polygon(18% 100%, 82% 100%, 70% 0%, 30% 0%);
+    box-shadow: 0 0 12px rgba(0,0,0,0.4);
   }
-  .right {
-    flex: 1;
+  .lh-lamp {
+    position: absolute;
+    bottom: 64px; left: 50%;
+    transform: translateX(-50%);
+    width: 12px; height: 10px;
+    background: var(--lamp-glow);
+    border-radius: 2px;
+    box-shadow: 0 0 14px 4px rgba(255,176,102,0.85);
+  }
+  .lh-beam {
+    position: absolute;
+    bottom: 68px;
+    left: 50%;
+    width: 4px;
+    height: 620px;
+    background: linear-gradient(to top, rgba(255,214,150,0.24), rgba(255,214,150,0.02) 75%);
+    transform-origin: bottom center;
+    animation: rotate-beam 8s linear infinite;
+    filter: blur(0.5px);
+  }
+  @keyframes rotate-beam {
+    0%   { transform: translateX(-50%) rotate(15deg); }
+    50%  { transform: translateX(-50%) rotate(85deg); }
+    100% { transform: translateX(-50%) rotate(15deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lh-beam { animation: none; transform: translateX(-50%) rotate(45deg); }
+    .stars { animation: none; }
+  }
+
+  .sea {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 54%;
+    background: linear-gradient(180deg, var(--sea-mid) 0%, var(--sea-deep) 100%);
+  }
+  .sea svg { position: absolute; bottom: 0; width: 200%; height: 60px; }
+  .wave1 { animation: wave-scroll 14s linear infinite; opacity: 0.5; bottom: 30px !important; }
+  .wave2 { animation: wave-scroll 22s linear infinite reverse; opacity: 0.35; }
+  @keyframes wave-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .wave1, .wave2 { animation: none; }
+  }
+
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 70% at 50% 55%, transparent 40%, rgba(4,10,17,0.55) 100%);
+    pointer-events: none;
+  }
+
+  /* ---------- foreground card ---------- */
+  .stage {
+    position: relative;
+    z-index: 3;
+    min-height: 100vh;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px;
+    padding: 40px 20px;
   }
-  .login-box {
-    width: 100%;
-    max-width: 350px;
-  }
-  .login-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 24px;
-  }
-  input {
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 12px;
-    background: #000;
-    border: 1px solid #555;
-    border-radius: 8px;
-    color: #f5f5f5;
-    font-size: 14px;
-  }
-  input::placeholder { color: #8e8e8e; }
-  input:focus { outline: none; border-color: #777; }
-  .login-btn {
-    width: 100%;
-    padding: 13px;
-    border: none;
-    border-radius: 8px;
-    background: #1e3a6e;
-    color: #7c93b8;
-    font-weight: 600;
-    font-size: 15px;
-    cursor: not-allowed;
-    margin-bottom: 18px;
-  }
-  .login-btn.active {
-    background: #0d6efd;
-    color: #fff;
-    cursor: pointer;
-  }
-  .forgot {
+
+  .wordmark {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
     text-align: center;
-    font-size: 13px;
-    color: #4da6ff;
-    text-decoration: none;
+    z-index: 4;
+  }
+  .wordmark .word {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brass-bright);
+  }
+  .wordmark .sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    color: var(--parchment-dim);
+    margin-top: 3px;
+  }
+
+  .porthole-wrap { perspective: 900px; }
+
+  .porthole {
+    position: relative;
+    width: 400px;
+    max-width: 100%;
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
+    background: var(--panel);
+    border: 10px solid #0c2033;
+    box-shadow:
+      0 0 0 3px var(--brass),
+      0 0 0 4px #06121f,
+      inset 0 0 60px rgba(0,0,0,0.55),
+      0 40px 90px rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: transform 0.25s ease;
+    transform-style: preserve-3d;
+  }
+
+  .glass-glare {
+    position: absolute;
+    top: -18%; left: -12%;
+    width: 60%; height: 60%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 40% 40%, rgba(241,233,214,0.10), transparent 70%);
+    transform: rotate(-18deg);
+    pointer-events: none;
+  }
+
+  .rivet {
+    position: absolute;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--brass-bright), #7a5f22 75%);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  }
+
+  .drift {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--brass-bright);
+    opacity: 0.35;
+    pointer-events: none;
+    animation: drift-up linear infinite;
+  }
+  @keyframes drift-up {
+    from { transform: translateY(10%) translateX(0); opacity: 0; }
+    10%  { opacity: 0.4; }
+    90%  { opacity: 0.2; }
+    to   { transform: translateY(-115%) translateX(6px); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .drift { animation: none; opacity: 0.15; } }
+
+  .inner {
+    width: 78%;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .lamp-icon {
+    width: 30px; height: 30px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--lamp) 0%, rgba(217,96,58,0.15) 70%, transparent 72%);
+    animation: lamp-pulse 3.4s ease-in-out infinite;
+  }
+  @keyframes lamp-pulse {
+    0%, 100% { opacity: 0.85; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.08); }
+  }
+  @media (prefers-reduced-motion: reduce) { .lamp-icon { animation: none; } }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 21px;
+    margin: 0 0 4px;
+  }
+  .greeting {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--parchment-dim);
+    margin-bottom: 20px;
+    letter-spacing: 0.04em;
+  }
+
+  form { display: flex; flex-direction: column; gap: 10px; }
+
+  .field { position: relative; text-align: left; }
+  .field label {
     display: block;
-    margin-bottom: 40px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 4px;
   }
-  .divider-space { height: 16px; }
-  .fb-btn, .create-btn {
+  .field input {
     width: 100%;
-    padding: 13px;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 14px;
+    padding: 9px 11px;
+    background: rgba(6,18,31,0.6);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--parchment);
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+  }
+  .field.has-toggle input { padding-right: 34px; }
+  .field input::placeholder { color: rgba(241,233,214,0.28); }
+  .field input:focus {
+    outline: 2px solid var(--brass-bright);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+
+  .eye-btn {
+    position: absolute;
+    right: 6px;
+    top: 24px;
+    width: 24px; height: 24px;
+    border: none;
+    background: none;
+    color: var(--parchment-dim);
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+  .eye-btn:hover { color: var(--brass-bright); }
+  .eye-btn:focus-visible { outline: 1px solid var(--brass-bright); }
+  .eye-btn svg { width: 15px; height: 15px; }
+
+  .keep-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 4px 0 2px;
+    font-size: 11px;
+  }
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--parchment-dim);
+    cursor: pointer;
+    user-select: none;
+  }
+  .toggle input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .toggle-track {
+    width: 30px; height: 16px;
+    border-radius: 999px;
+    background: rgba(241,233,214,0.15);
+    border: 1px solid var(--line);
+    position: relative;
+    transition: background 0.2s ease;
+    flex-shrink: 0;
+  }
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 1.5px; left: 2px;
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: var(--parchment-dim);
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .toggle input:checked + .toggle-track { background: rgba(201,162,74,0.35); }
+  .toggle input:checked + .toggle-track::after {
+    transform: translateX(13px);
+    background: var(--brass-bright);
+  }
+  .toggle input:focus-visible + .toggle-track { outline: 2px solid var(--brass-bright); outline-offset: 2px; }
+
+  .keep-row a { color: var(--brass-bright); text-decoration: none; }
+  .keep-row a:hover { text-decoration: underline; }
+
+  .enter-btn {
+    margin-top: 8px;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: linear-gradient(180deg, var(--brass-bright), var(--brass));
+    color: #1a1204;
+    font-weight: 600;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.1s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 36px;
+  }
+  .enter-btn:hover { filter: brightness(1.06); }
+  .enter-btn:active { transform: translateY(1px); filter: brightness(0.96); }
+  .enter-btn:focus-visible { outline: 2px solid var(--parchment); outline-offset: 2px; }
+  .enter-btn[disabled] { cursor: default; }
+
+  .btn-label { transition: opacity 0.15s ease; }
+  .spinner {
+    width: 15px; height: 15px;
+    border-radius: 50%;
+    border: 2px solid rgba(26,18,4,0.25);
+    border-top-color: #1a1204;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  .enter-btn.loading .spinner { display: inline-block; }
+  .enter-btn.loading .btn-label { opacity: 0.6; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .success {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: #bfe3b8;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .success.show { display: flex; opacity: 1; }
+  .success svg { width: 14px; height: 14px; }
+
+  .error-msg {
+    display: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #e39a8a;
+    margin-top: 10px;
     text-align: center;
   }
-  
-  .create-btn {
-    background: transparent;
-    border: 1px solid #0d6efd;
-    color: #4da6ff;
+  .error-msg.show { display: block; }
+
+  .new-log {
+    margin-top: 10px;
+    font-size: 10.5px;
+    color: var(--parchment-dim);
   }
-  .meta-logo {
-    margin-top: 30px;
-    color: #8e8e8e;
-    font-size: 14px;
+  .new-log a { color: var(--brass-bright); text-decoration: none; }
+  .new-log a:hover { text-decoration: underline; }
+
+  .demo-note {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    color: rgba(185,174,149,0.55);
+    z-index: 4;
     text-align: center;
   }
-  @media (max-width: 860px) {
-    .wrapper { flex-direction: column; }
-    .left { border-right: none; border-bottom: 1px solid #262626; padding: 30px 20px; }
-    .tagline { font-size: 24px; }
+
+  @media (max-width: 460px) {
+    .porthole { width: 320px; }
+    .wordmark { top: 18px; }
+    .lighthouse { left: 8%; }
   }
 </style>
 </head>
 <body>
-<div class="demo-banner">
-    ⚠️ Educational Demonstration Only – This website is a simulated login page created for cybersecurity training. It is not affiliated with Instagram or Meta.
+
+<div class="scene" id="scene">
+  <div class="sky"></div>
+  <div class="stars"></div>
+  <div class="moon"></div>
+  <div class="headland"></div>
+  <div class="lighthouse">
+    <div class="lh-beam"></div>
+    <div class="lh-body"></div>
+    <div class="lh-lamp"></div>
+  </div>
+  <div class="sea">
+    <svg class="wave1" viewBox="0 0 800 60" preserveAspectRatio="none">
+      <path d="M0 30 Q 100 10 200 30 T 400 30 T 600 30 T 800 30 V60 H0 Z" fill="#173a56"></path>
+    </svg>
+    <svg class="wave2" viewBox="0 0 800 60" preserveAspectRatio="none">
+      <path d="M0 20 Q 100 40 200 20 T 400 20 T 600 20 T 800 20 V60 H0 Z" fill="#0d2c44"></path>
+    </svg>
+  </div>
+  <div class="vignette"></div>
 </div>
-  <div class="left">
-    <div class="demo-logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-        <rect x="2" y="2" width="20" height="20" rx="5"/>
-        <circle cx="12" cy="12" r="4.5"/>
-        <circle cx="17.5" cy="6.5" r="1.2" fill="white" stroke="none"/>
-      </svg>
-    </div>
-   <div class="wrapper">
-    <div class="tagline">This is a simulated login page for cybersecurity training.</div>
-    <div class="phones">
-      <div class="phone phone1"></div>
-      <div class="phone phone2"></div>
-      <div class="phone phone3"></div>
+
+<div class="wordmark">
+  <div class="word">Tidegate</div>
+  <div class="sub">keeper's logbook</div>
+</div>
+
+<div class="stage">
+  <div class="porthole-wrap">
+    <div class="porthole" id="porthole">
+      <div class="rivet" style="top: 6%; left: 50%; transform: translateX(-50%);"></div>
+      <div class="rivet" style="bottom: 6%; left: 50%; transform: translateX(-50%);"></div>
+      <div class="rivet" style="top: 50%; left: 4%; transform: translateY(-50%);"></div>
+      <div class="rivet" style="top: 50%; right: 4%; transform: translateY(-50%);"></div>
+      <div class="rivet" style="top: 15%; left: 15%;"></div>
+      <div class="rivet" style="top: 15%; right: 15%;"></div>
+      <div class="rivet" style="bottom: 15%; left: 15%;"></div>
+      <div class="rivet" style="bottom: 15%; right: 15%;"></div>
+
+      <div class="glass-glare"></div>
+      <div class="drift" style="width:2px; height:2px; left:30%; bottom:0; animation-duration:7s; animation-delay:0s;"></div>
+      <div class="drift" style="width:1.5px; height:1.5px; left:55%; bottom:0; animation-duration:9s; animation-delay:2s;"></div>
+      <div class="drift" style="width:2px; height:2px; left:68%; bottom:0; animation-duration:6.5s; animation-delay:4s;"></div>
+      <div class="drift" style="width:1px; height:1px; left:42%; bottom:0; animation-duration:8s; animation-delay:1s;"></div>
+
+      <div class="inner">
+        <div class="lamp-icon"></div>
+        <h1>Welcome back, keeper</h1>
+        <div class="greeting">last entry logged 2 nights ago</div>
+
+        <form id="loginForm" novalidate>
+          <div class="field">
+            <label for="username">Email</label>
+            <input id="username" type="email" placeholder="keeper@example.com" autocomplete="email">
+          </div>
+          <div class="field has-toggle">
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="eye-btn" id="eyeBtn" aria-label="Show password" aria-pressed="false">
+              <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <div class="keep-row">
+            <label class="toggle">
+              <input type="checkbox" id="keepWatch">
+              <span class="toggle-track"></span>
+              Keep watch open
+            </label>
+            <a href="#">Forgot password?</a>
+          </div>
+          <button class="enter-btn" type="submit" id="enterBtn">
+            <span class="btn-label" id="btnLabel">Enter the logbook</span>
+            <span class="spinner" id="spinner"></span>
+          </button>
+          <div class="success" id="successMsg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            Logbook opened
+          </div>
+          <div class="error-msg" id="errorMsg"></div>
+        </form>
+
+        <div class="new-log">New keeper? <a href="#">Register a station</a></div>
+      </div>
     </div>
   </div>
-
-  <div class="right">
-    <div class="login-box">
-      <div class="login-title">Demo Login</div>
-      <input id="user" type="text" placeholder="Demo Mobile number, username or email address">
-      <input id="pass" type="password" placeholder="Demo Password">
-      <button class="login-btn" id="loginBtn">Continue(Demo)</button>
-      <a class="forgot" href="#">Forgotten password?</a>
-     
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877f2"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>
-    
-      <button class="create-btn">Create new account</button>
-      <div class="meta-logo">
-    Cybersecurity Project<br>
-    Daystar University.
 </div>
 
+<div class="demo-note">fictional interface — no data leaves this page</div>
+
 <script>
- const SUPABASE_URL ='https://hcscjoqebozfoeevfktl.supabase.co';
- const SUPABASE_ANON_KEY = 'sb_publishable_AIew0nkWkEFAXTmLES-uqw_WqO_3vww';
-  const user = document.getElementById('user');
-  const pass = document.getElementById('pass');
-  const btn = document.getElementById('loginBtn');
-  function check() {
-    if (user.value.trim() && pass.value.trim()) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
+  // password visibility toggle
+  const eyeBtn = document.getElementById('eyeBtn');
+  const passwordInput = document.getElementById('password');
+  const eyeIcon = document.getElementById('eyeIcon');
+  const eyeOpen = '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>';
+  const eyeClosed = '<path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.3 20.3 0 0 1 4.22-5.19M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a20.3 20.3 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/>';
+
+  eyeBtn.addEventListener('click', () => {
+    const showing = passwordInput.type === 'text';
+    passwordInput.type = showing ? 'password' : 'text';
+    eyeIcon.innerHTML = showing ? eyeOpen : eyeClosed;
+    eyeBtn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+    eyeBtn.setAttribute('aria-pressed', String(!showing));
+  });
+
+  // subtle 3D tilt on the porthole, mouse-follow
+  const porthole = document.getElementById('porthole');
+  const stage = document.querySelector('.stage');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduceMotion) {
+    stage.addEventListener('mousemove', (e) => {
+      const r = porthole.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dx = (e.clientX - cx) / r.width;
+      const dy = (e.clientY - cy) / r.height;
+      const max = 6;
+      porthole.style.transform = `rotateY(${dx * max}deg) rotateX(${-dy * max}deg)`;
+    });
+    stage.addEventListener('mouseleave', () => {
+      porthole.style.transform = 'rotateY(0deg) rotateX(0deg)';
+    });
   }
-  user.addEventListener('input', check);
-  pass.addEventListener('input', check);
+
+  // ---- Supabase config ----
+  // Paste your project's values from Project Settings > API.
+  // The anon/public key is safe to expose in client-side code.
+  const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+  const supabaseClient = (SUPABASE_URL.startsWith('http'))
+    ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null;
+
+  const form = document.getElementById('loginForm');
+  const enterBtn = document.getElementById('enterBtn');
+  const btnLabel = document.getElementById('btnLabel');
+  const successMsg = document.getElementById('successMsg');
+  const errorMsg = document.getElementById('errorMsg');
+  const emailInput = document.getElementById('username');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (enterBtn.classList.contains('loading')) return;
+
+    successMsg.classList.remove('show');
+    errorMsg.classList.remove('show');
+
+    if (!supabaseClient) {
+      errorMsg.textContent = 'Add your Supabase URL and anon key in the script to connect this form.';
+      errorMsg.classList.add('show');
+      return;
+    }
+
+    enterBtn.classList.add('loading');
+    enterBtn.disabled = true;
+    btnLabel.textContent = 'Checking the tide charts…';
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: emailInput.value.trim(),
+      password: passwordInput.value
+    });
+
+    enterBtn.classList.remove('loading');
+    enterBtn.disabled = false;
+    btnLabel.textContent = 'Enter the logbook';
+
+    if (error) {
+      errorMsg.textContent = error.message;
+      errorMsg.classList.add('show');
+      return;
+    }
+
+    successMsg.classList.add('show');
+    // data.session and data.user are now available — e.g. redirect on success:
+    // window.location.href = '/logbook';
+  });
 </script>
+
 </body>
 </html>
