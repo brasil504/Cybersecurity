@@ -1,7 +1,7 @@
 const supabaseUrl = "https://hcscjoqebozfoeevfktl.supabase.co";
 const supabaseKey = "sb_publishable_AIew0nkWkEFAXTmLES-uqw_WqO_3vww";
 
-const db = window.supabase.createClient( supabaseUrl,supabaseKey);
+const client = supabase.createClient( supabaseUrl,supabaseKey);
 
 document.getElementById("signupForm").addEventListener("submit", async (event) => {
   event.preventDefault();
