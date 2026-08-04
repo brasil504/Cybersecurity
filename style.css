@@ -1,0 +1,92 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #121212;
+  color: white;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* LEFT SIDE */
+.left {
+  width: 50%;
+  padding: 80px;
+  background: black;
+}
+
+.logo {
+  width: 60px;
+  margin-bottom: 30px;
+}
+
+.left h1 {
+  font-size: 36px;
+  font-weight: 400;
+}
+
+.left span {
+  color: #ff2c78;
+}
+
+.preview {
+  width: 250px;
+  margin-top: 30px;
+  border-radius: 20px;
+}
+
+/* RIGHT SIDE */
+.right {
+  width: 50%;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.right h2 {
+  margin-bottom: 20px;
+}
+
+.right input {
+  background: transparent;
+  border: 1px solid #333;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  color: white;
+}
+
+.login {
+  background: #1877f2;
+  border: none;
+  padding: 12px;
+  border-radius: 25px;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.forgot {
+  text-align: center;
+  color: #aaa;
+  margin-bottom: 20px;
+}
+
+.facebook {
+  background: transparent;
+  border: 1px solid #333;
+  padding: 12px;
+  border-radius: 25px;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.create {
+  background: transparent;
+  border: 1px solid #1877f2;
+  padding: 12px;
+  border-radius: 25px;
+  color: #1877f2;
+}
