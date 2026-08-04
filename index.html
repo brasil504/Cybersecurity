@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Instagram Login</title>
+  <title>My App Login</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,30 +21,23 @@
 
   <!-- RIGHT SIDE -->
   <div class="right">
-    <h2><title>My App Login</title></h2>
+    <h2>My App Login</h2>
 
-   
-  <div class="right">
-  <h2>My App Login</h2>
+    <form id="form">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
 
-  <form id="form">
+      <button type="submit" class="login">Log in</button>
+      <button type="button" onclick="handleSignup()">Sign Up</button>
+    </form>
 
-    <input type="text" id="email" placeholder="Mobile number, username or email" required>
+    <p class="forgot">Forgot password?</p>
 
-    <input type="password" id="password" placeholder="Password" required>
-
-    <button type="submit" class="login">Log in</button>
-
-  </form>
-
-  <p class="forgot">Forgot password?</p>
-
-  <button class="facebook">Log in with Facebook</button>
-
-  <button class="create">Create new account</button>
-  </div>
+    <button class="facebook">Log in with Facebook</button>
+    <button class="create">Create new account</button>
 
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
  <script src="script.js"></script>
 </body>
