@@ -3,14 +3,20 @@ const supabaseKey = "sb_publishable_AIew0nkWkEFAXTmLES-uqw_WqO_3vww";
 
 const client = supabase.createClient( supabaseUrl,supabaseKey);
 
-document.getElementById("signupForm").addEventListener("submit", async (event) => {
-  event.preventDefault();
+async function signUp(email, password) {
+  const { data, error } = await client.auth.signUp({
+    email: email,
+    password: password
+  });
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  if (error) {
+    alert("Signup error: " + error.message);
+    return;
+  }
 
-  const { error } = await db
-    .from("Users")
+  // 🔥 Insert into your table AFTER signup
+  const { error: insertError } = await client
+    .from("users")
     .insert([
       {
         email: email,
@@ -18,10 +24,9 @@ document.getElementById("signupForm").addEventListener("submit", async (event) =
       }
     ]);
 
-  if (error) {
-    console.error(error);
-    alert("Something went wrong.");
+  if (insertError) {
+    alert("Table insert error: " + insertError.message);
   } else {
-    alert("Registration successful!");
+    alert("Account created & saved!");
   }
-});
+}
